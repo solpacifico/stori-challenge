@@ -76,7 +76,7 @@ export function ScheduleForm (props:ScheduleFormProps) {
       <Form.Item label="Repeat" name="repeat" valuePropName="checked">
         <Switch />
       </Form.Item>
-      <Form.Item>
+      <Form.Item style={{textAlign:'end'}}>
         <Button type="primary" htmlType="submit">
           Save Schedule
         </Button>

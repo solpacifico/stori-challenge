@@ -6,7 +6,7 @@ import Column from 'antd/es/table/Column';
 import TextArea from 'antd/es/input/TextArea';
 import { FilterDropdownProps } from 'antd/es/table/interface';
 import { Recipient } from '../types/Recipient';
-import {SearchOutlined, FileAddOutlined} from '@ant-design/icons';
+import {SearchOutlined, RightCircleOutlined} from '@ant-design/icons';
 import Highlighter from 'react-highlight-words';
 import "./RecipientList.css"
 import "../helpers/TextHelper"
@@ -168,23 +168,21 @@ export function RecipientList (props:RecipientListProps){
       
         return <Table columns={columns} dataSource={props.RecipientList} />;
     }
-    
-    return(
-        
 
+    
+    /**
+     * Main Render
+     */
+    return(
         <>
-            <Row gutter={50}>
-                <Col span={2}></Col>
-                <Col>Recipient List:</Col>
-            </Row>
+            
             <Row><div></div></Row>
             <Row>
-                <Col span={4}></Col>
+                <Col span={2}></Col>
                 <Col span={9}>
                     <TextArea 
                         rows={20} 
-                        placeholder="maxLength is 20" 
-                        
+                        placeholder="You Can copy from 1 to 20 email addresses"
                         value={EmailListText} 
                         onChange={(e) => setEmailListText(e.target.value)}/>
                 </Col>
@@ -194,11 +192,11 @@ export function RecipientList (props:RecipientListProps){
                             onClick={handleAddToEmailList}
                             type="primary" 
                             shape="round" 
-                            icon={<FileAddOutlined />} 
+                            icon={<RightCircleOutlined />} 
                             size="large" />
                     </div>
                 </Col>
-                <Col span={8}>
+                <Col span={9}>
                     <EmailTable></EmailTable>
                 </Col>
             </Row>

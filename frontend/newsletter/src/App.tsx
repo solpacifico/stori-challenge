@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, theme, Typography } from 'antd';
+import { Layout, Menu, Button, theme, Typography, Row, Col } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -19,11 +19,27 @@ function App() {
     token: { colorBgContainer },
   } = theme.useToken();
   return (
-    <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+    <Layout >
+     
+      <Header style={{ padding: 13, background: colorBgContainer, height:130 }}>
+        <Row>
+          <Col span={4} style={{paddingLeft:20}}><img src="mailbox.png"  width="120px" height="120px"/></Col>
+          <Col span={8} style={{verticalAlign:'top'}}>
+            <Title>
+              Stori NewsLetter
+            </Title>
+          </Col>
+          <Col span={8}></Col>
+      </Row>
+        
+          
+        </Header>
+      <Layout>
+      <Sider trigger={null} collapsible collapsed={collapsed} theme='light' >
         <div className="demo-logo-vertical" />
         <Menu
-          theme="dark"
+          
+          theme="light"
           mode="inline"
           defaultSelectedKeys={['1']}
           items={[
@@ -35,7 +51,7 @@ function App() {
             {
               key: '2',
               icon: <VideoCameraOutlined />,
-              label: 'nav 2',
+              label: 'Dashboard',
             },
             {
               key: '3',
@@ -45,20 +61,13 @@ function App() {
           ]}
         />
       </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer, height:100 }}>
-          <Title>
-            NewsLetter
-          </Title>
-        
-          
-        </Header>
         <Content
           style={{
-            margin: '24px 16px',
-            padding: 24,
-            minHeight: 800,
+            margin: '24px 24px',
+            padding: 24,            
             background: colorBgContainer,
+            height:'100vh',
+            borderRadius:15
           }}
         >
         <NewsLetterPage></NewsLetterPage>

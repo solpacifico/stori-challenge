@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NewsLetterFormProps } from '../models/NewsLetterFormProps';
-import { Button, Flex, FloatButton, Form, Input, InputNumber, Row, Space, Upload, UploadProps } from 'antd';
-import { CheckCircleOutlined , UploadOutlined,CloseCircleOutlined } from '@ant-design/icons';
+import { Button, Flex, FloatButton, Form, Input, InputNumber, Modal, Row, Space, Upload, UploadProps } from 'antd';
+import { CheckCircleOutlined , UploadOutlined,CloseCircleOutlined, ClockCircleOutlined, SendOutlined  } from '@ant-design/icons';
 import { PickerOverlay } from 'filestack-react';
 import { FileInfo } from '../types/FileInfo';
 import { NewsLetter } from '../types/NewsLetter';
@@ -17,13 +17,13 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
 
     const API_KEY = "AhFvrvtZjQHWp15rPmsQNz";
 
-    const [AttachOverlay,setattachOverlay] = useState(false);
-    
+    const [AttachOverlay,setattachOverlay] = useState(false);    
     const [FileObject, setFileObject] = useState<FileInfo>();
-
     const [showScheduler, setShowScheduler] = useState(false);
-
     const [form] = Form.useForm();
+    const [ShowEmailList,setShowEmailList] = useState(false);
+    
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
   
    
@@ -152,41 +152,67 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
     }
 
     const handleScheduleSubmit = (values:Schedule)=>{
+      setShowScheduler(false);
       props.handleScheduleSubmit && props.handleScheduleSubmit(values)
     }
+
+    const handleOk = () => {
       
-    
+      setConfirmLoading(true);
+      setTimeout(() => {
+          setShowEmailList(false);
+        setConfirmLoading(false);
+      }, 2000);
+    };
+  
+    const handleCancel = () => {
+      
+      setShowEmailList(false);
+    };
+
+    const showEmailListHandler = () =>{
+      setShowEmailList(true)
+    }
+      
+    /**
+     * Main Render
+     */
     return(
         
       <div>
          <Space direction="vertical" size="large" style={{ display: 'flex' }}>
             <NLForm></NLForm>
-          
-            <RecipientList
-              RecipientList={props.NewsLetterDTO?.recipients}
-              handleAddToEmailList = {handleAddToEmailList}
-              handleDeleteEmail={handleDeleteEmail}
-            ></RecipientList>
+            <Modal
+              title="Recipient Email List"
+              open={ShowEmailList}
+              onOk={handleOk}
+              confirmLoading={confirmLoading}
+              onCancel={handleCancel}
+              width={950}
+              centered
+              >
+              <RecipientList
+                RecipientList={props.NewsLetterDTO?.recipients}
+                handleAddToEmailList = {handleAddToEmailList}
+                handleDeleteEmail={handleDeleteEmail}
+                ></RecipientList>
+            </Modal>
 
-            <Flex gap="small" wrap="wrap">                    
-              <Button 
-                onClick={handleShowScheduler}
-                type="primary" 
-                shape="round" 
-                icon={<UploadOutlined />} 
-                size="large" />            
-            </Flex>
+            
+            <Modal
+              title="Schedule for Automatic Task"
+              open={showScheduler}
+             
+              footer={[]}
+              width={700}
+              centered
+              >
+                <ScheduleForm 
+                  onSubmitHandle={handleScheduleSubmit}
+                  ScheduleDTO={props?.ScheduleDTO}></ScheduleForm>   
+              </Modal>
 
-            {showScheduler?<ScheduleForm 
-              onSubmitHandle={handleScheduleSubmit}
-              ScheduleDTO={props?.ScheduleDTO}></ScheduleForm>:null}
-
-           
-
-
-        
-        
-        
+              
         </Space>
 
 
@@ -199,15 +225,36 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
           ></PickerOverlay>
         :null}
 
-        <FloatButton.Group shape="circle" style={{ right: 24 }}>
+        <FloatButton.Group shape="circle" style={{ right: 40 }}>
+            <FloatButton
+              onClick={showEmailListHandler}
+              tooltip="Send the Newsletter NOW!"
+              icon={<SendOutlined />}
+              type='primary'
+            />
+           
+            <FloatButton
+              onClick={showEmailListHandler}
+              tooltip="Show and Update recipient list"
+            />
+            <FloatButton
+              onClick={handleShowScheduler}
+              tooltip="Schedule Newsletter Task"
+              icon= {<ClockCircleOutlined />}
+            />
             <FloatButton
               onClick={saveHandler}
-              icon={<CheckCircleOutlined />}                
+              icon={<CheckCircleOutlined />}    
+              type='primary'
+              tooltip="Save Changes"            
             />
-            <FloatButton />
+            
             <FloatButton.BackTop visibilityHeight={0} 
                 onClick={cancelHandler}
-                icon={<CloseCircleOutlined/>}/>
+                icon={<CloseCircleOutlined/>}
+                type='primary'            
+                tooltip="Back to Newsletter List"
+                />
         </FloatButton.Group>
 
 

@@ -27,6 +27,7 @@ const NewsLetterPage:React.FC=()=>{
     const [CurrentNewsLetter, setCurrentNewsLetter] = useState<NewsLetter>();
     const [NewNewsLetter, setNewNewsLetter ] =useState(false);
     const [ScheduleDTO,setScheduleDTO] = useState<Schedule>();
+   
 
 
 
@@ -197,16 +198,7 @@ const NewsLetterPage:React.FC=()=>{
     return(
         <>
             <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
-                <Flex gap="small" wrap="wrap">
-                    
-                    <Button 
-                        onClick={handleCreateNL}
-                        type="primary" 
-                        shape="round" 
-                        icon={<FileAddOutlined />} 
-                        size="large" />
-                    
-                </Flex>
+               
                 
                 {DetailMode?
                 <NewsLetterForm
@@ -219,14 +211,23 @@ const NewsLetterPage:React.FC=()=>{
                     ScheduleDTO={ScheduleDTO}
                     handleScheduleSubmit={handleScheduleSubmit}
                 ></NewsLetterForm>:
+                <div>
+                <Flex gap="small" wrap="wrap">
+                  
+                    <Button 
+                        onClick={handleCreateNL}
+                        type="primary" 
+                        shape="round" 
+                        icon={<FileAddOutlined />} 
+                        size="large" />
+                </Flex>
                 <NewsLetterList
                     NewsLetterListDTO = {NewsLetterListDTO}
                     handleDelete={handleDelete}
                     handleEdit={handleEdit}                    
-                ></NewsLetterList>}
-
-               
-
+                ></NewsLetterList>
+                </div>   
+                }
                
             </Space>
         </>
