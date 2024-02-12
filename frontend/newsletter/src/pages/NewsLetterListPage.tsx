@@ -264,6 +264,7 @@ const NewsLetterPage:React.FC=()=>{
                         type="primary" 
                         shape="round" 
                         icon={<FileAddOutlined />} 
+                        
                         size="large" />
                 </Flex>
                 <NewsLetterList

@@ -31,15 +31,9 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
     const [ShowEmailList,setShowEmailList] = useState(false);    
     const [confirmLoading, setConfirmLoading] = useState(false); 
    
-    const [api, contextHolder] = notification.useNotification();
+    
 
-    const openNotification = (message: string) => {
-      api.info({
-        message: message,
-       // description: <Context.Consumer>{({ name }) => `Hello, ${name}!`}</Context.Consumer>,
-        
-      });
-    };
+   
    
     const layout = {
         labelCol: { span: 8 },
@@ -101,7 +95,7 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
     const showAttacmentOverlay = () =>{
       setattachOverlay(!AttachOverlay);
       
-      openNotification("NewsLetter Saved");
+      //openNotification("NewsLetter Saved");
     }
 
     const FileUploadDone = (res:any) =>{
@@ -163,7 +157,7 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
      */
     const SendNewsLetterNowHandler =()  => {
       props.SendNewsLetterNOWHandler && props.SendNewsLetterNOWHandler(props.NewsLetterDTO?.id??0);
-      openNotification("Emails Sent");
+      //openNotification("Emails Sent");
     }
 
     /**
@@ -217,7 +211,7 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
     return(
      
       <div>
-        {contextHolder}
+      
          <Space direction="vertical" size="large" style={{ display: 'flex' }}>
             <NLForm></NLForm>
             <Modal
@@ -265,7 +259,7 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
               onUploadDone={(res:any) => FileUploadDone(res)}  
           ></PickerOverlay>
         :null}
-        /** Action Buttons*/
+       
         <FloatButton.Group shape="circle" style={{ right: 40 }}>
             <FloatButton
               onClick={SendNewsLetterNowHandler}
