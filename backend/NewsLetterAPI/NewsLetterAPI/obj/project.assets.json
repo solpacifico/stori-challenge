@@ -8933,26 +8933,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\jagar\\.nuget\\packages\\": {}
+    "/Users/betofk/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jagar\\source\\repos\\NewsLetterAPI\\NewsLetterAPI\\NewsLetterAPI.csproj",
+      "projectUniqueName": "/Users/betofk/Documents/repos/stori-challenge/stori-challenge/backend/NewsLetterAPI/NewsLetterAPI/NewsLetterAPI.csproj",
       "projectName": "NewsLetterAPI",
-      "projectPath": "C:\\Users\\jagar\\source\\repos\\NewsLetterAPI\\NewsLetterAPI\\NewsLetterAPI.csproj",
-      "packagesPath": "C:\\Users\\jagar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jagar\\source\\repos\\NewsLetterAPI\\NewsLetterAPI\\obj\\",
+      "projectPath": "/Users/betofk/Documents/repos/stori-challenge/stori-challenge/backend/NewsLetterAPI/NewsLetterAPI/NewsLetterAPI.csproj",
+      "packagesPath": "/Users/betofk/.nuget/packages/",
+      "outputPath": "/Users/betofk/Documents/repos/stori-challenge/stori-challenge/backend/NewsLetterAPI/NewsLetterAPI/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\jagar\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/Users/betofk/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -9047,7 +9045,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
