@@ -2,6 +2,8 @@
 
 # dependencies
 /frontend/stori-newsletter/node_modules
+/frontend/stori-newsletter/build
+
 /backend/NewsLetterAPI/bin
 /backend/NewsLetterAPI/obj
 /.pnp
