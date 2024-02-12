@@ -27,10 +27,7 @@ namespace NewsLetterAPI.Controllers
             _context = context;
             _mailService = mailService;
             _configuration = configuration;
-        }
-
-        
-
+        }  
         
 
         // GET: api/NewsLetterx
