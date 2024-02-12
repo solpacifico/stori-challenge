@@ -9,10 +9,11 @@ import { RecipientList } from "../components/RecipientList";
 import { Recipient } from "../types/Recipient";
 import { arrayBuffer } from "stream/consumers";
 import { Schedule } from "../types/Sechedule";
+import { FileInfo } from "../types/FileInfo";
 
 
 /**
- * News Lettter List compornent Page
+ * News Lettter List compornent Page This page manage the state data for the app
  * @returns 
  */
 const NewsLetterPage:React.FC=()=>{
@@ -27,6 +28,7 @@ const NewsLetterPage:React.FC=()=>{
     const [CurrentNewsLetter, setCurrentNewsLetter] = useState<NewsLetter>();
     const [NewNewsLetter, setNewNewsLetter ] =useState(false);
     const [ScheduleDTO,setScheduleDTO] = useState<Schedule>();
+    const [CurrentFileObject, setCurrentFileObject] = useState<FileInfo>();
    
 
 
@@ -60,9 +62,14 @@ const NewsLetterPage:React.FC=()=>{
      * Handlers
      */
 
+    /**
+     * Calls the API for delete a newsletter object from backend
+     * @param key prirmary Key for newsletter
+     */
     const handleDelete = (key: number) => {
         NewsLettterAPIService.deleteNewsLetter(key)
             .then((response:any) => {
+                
                 getNewsLetterList();
             })
             .catch((e:Error) => {
@@ -70,30 +77,44 @@ const NewsLetterPage:React.FC=()=>{
             });
     };
 
-    const handleEdit = (key: number) => {
+    /**
+     * Calls the api to update a newsletter record, Also shows the detail form to edit the newsletter
+     * @param key Primary keay for newsletter record
+     */
+    const handleEdit = async (key: number) => {
                
-        const current = NewsLetterListDTO.find((x:NewsLetter) => x.id === key);        
+        const  current = await NewsLetterListDTO.find((x:NewsLetter) => x.id === key);        
         setCurrentNewsLetter(current);
+       
+        
         NewsLettterAPIService.getScheduleByNewsletter(current?.id??0)
             .then((response:any) => {
-                
-                setScheduleDTO(response.data);
+                //Set the updated state
+               setScheduleDTO(response.data);
                 
             })
             .catch((e:Error) => {
                 console.error(e);
             });
-
+        
+        try{
+            console.log(current);
+            
+                setCurrentFileObject(JSON.parse(current?.attachment??"{}"));
+            
+        }
+        catch(e){
+            console.log(e);
+        };
         setNewNewsLetter(false);
         setDetailMode(1);
 
-
     };
 
-    const handleReturnToList = () =>{
-        setDetailMode(0);
-    }
-
+   /**
+    * Calls the API to create a new Newsletter in the backend database
+    * @param objToSave DataObject to save
+    */
     const handleToSave =(objToSave:NewsLetter)=>{
         if(NewNewsLetter){
             NewsLettterAPIService.postNewsLetter(objToSave)
@@ -116,7 +137,10 @@ const NewsLetterPage:React.FC=()=>{
         }
 
     }
-
+    /**
+     * Calls the Api to Save a list of emails to a existent newsletter
+     * @param recipientList Recipient List to Save
+     */
     const handleAddToEmailList=(recipientList:Recipient[])=>{
         const current = CurrentNewsLetter;
         recipientList.forEach((element:Recipient) => {
@@ -141,6 +165,10 @@ const NewsLetterPage:React.FC=()=>{
         setCurrentNewsLetter(undefined);
         setNewNewsLetter(true);
         setDetailMode(1);
+    }
+
+    const handleReturnToList = () =>{
+        setDetailMode(0);
     }
 
     const handleDeleteEmail =(id:number)  => {
@@ -192,6 +220,20 @@ const NewsLetterPage:React.FC=()=>{
         }
     }
 
+    function FileUploadDoneHandler(FileObjectDTO: FileInfo): void {
+        setCurrentFileObject(FileObjectDTO);
+    }
+
+    function SendNewsLetterNOWHandler(id: number): void {
+        NewsLettterAPIService.sendNewsLetter(id)
+            .then((response:any) => {
+               
+            })
+        .catch((e:Error) => {
+            console.error(e);
+        });
+    }
+
     /**
      * Main Return
      */
@@ -210,6 +252,9 @@ const NewsLetterPage:React.FC=()=>{
                     handleDeleteEmail={handleDeleteEmail}
                     ScheduleDTO={ScheduleDTO}
                     handleScheduleSubmit={handleScheduleSubmit}
+                    CurrentFileObject = {CurrentFileObject}
+                    FileUploadDoneHandler={FileUploadDoneHandler}
+                    SendNewsLetterNOWHandler={SendNewsLetterNOWHandler}
                 ></NewsLetterForm>:
                 <div>
                 <Flex gap="small" wrap="wrap">

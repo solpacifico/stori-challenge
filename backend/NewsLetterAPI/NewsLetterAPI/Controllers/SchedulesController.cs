@@ -76,23 +76,23 @@ namespace NewsLetterAPI.Controllers
         {
            // var schedule = await _context.Schedules.FindAsync(id);
 
-            var schedule = await _context.Schedules
-               .FromSql($"SELECT * FROM Schedules WHERE NewsLetterId = {id}").FirstAsync();
+            var schedule =  _context.Schedules
+               .FromSql($"SELECT * FROM Schedules WHERE NewsLetterId = {id}").ToList();
 
-            if (schedule == null)
+            if (schedule.Count == 0)
             {
                 return ControllerBase.Empty;
             }
             var schedulesDTO = new ScheduleDTO()
             {
-                ScheduleId = schedule.ScheduleId,
-                NewsLetterId = schedule.NewsLetterId,
-                Active = schedule.Active,
-                SendTime = schedule.SendTime,
-                SendWeekDay = schedule.SendWeekDay,
-                SendMonthDay = schedule.SendMonthDay,
-                SendDate = schedule.SendDate,
-                Repeat = schedule.Repeat,
+                ScheduleId = schedule[0].ScheduleId,
+                NewsLetterId = schedule[0].NewsLetterId,
+                Active = schedule[0].Active,
+                SendTime = schedule[0].SendTime,
+                SendWeekDay = schedule[0].SendWeekDay,
+                SendMonthDay = schedule[0].SendMonthDay,
+                SendDate = schedule[0].SendDate,
+                Repeat = schedule[0].Repeat,
             };
 
             return schedulesDTO;

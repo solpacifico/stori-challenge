@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { NewsLetterFormProps } from '../models/NewsLetterFormProps';
-import { Button, Flex, FloatButton, Form, Input, InputNumber, Modal, Row, Space, Upload, UploadProps } from 'antd';
+import { Button, Flex, FloatButton, Form, Input, InputNumber, Modal, NotificationArgsProps, Row, Space, Upload, UploadProps, notification } from 'antd';
 import { CheckCircleOutlined , UploadOutlined,CloseCircleOutlined, ClockCircleOutlined, SendOutlined  } from '@ant-design/icons';
 import { PickerOverlay } from 'filestack-react';
 import { FileInfo } from '../types/FileInfo';
@@ -10,25 +10,37 @@ import { Recipient } from '../types/Recipient';
 import {ScheduleForm} from './ScheduleForm';
 import { ScheduleFormProps } from '../models/ScheduleFormProps';
 import { Schedule } from '../types/Sechedule';
+import { createTypeReferenceDirectiveResolutionCache } from 'typescript';
 
 
+const Context = React.createContext({ name: 'Default' });
 
 export function  NewsLetterForm (props:NewsLetterFormProps){
 
+    /**File Service Key */
     const API_KEY = "AhFvrvtZjQHWp15rPmsQNz";
 
+    
+    /**
+     * State Hooks
+     */
     const [AttachOverlay,setattachOverlay] = useState(false);    
     const [FileObject, setFileObject] = useState<FileInfo>();
     const [showScheduler, setShowScheduler] = useState(false);
     const [form] = Form.useForm();
-    const [ShowEmailList,setShowEmailList] = useState(false);
-    
-    const [confirmLoading, setConfirmLoading] = useState(false);
-
-  
+    const [ShowEmailList,setShowEmailList] = useState(false);    
+    const [confirmLoading, setConfirmLoading] = useState(false); 
    
+    const [api, contextHolder] = notification.useNotification();
 
-    
+    const openNotification = (message: string) => {
+      api.info({
+        message: message,
+       // description: <Context.Consumer>{({ name }) => `Hello, ${name}!`}</Context.Consumer>,
+        
+      });
+    };
+   
     const layout = {
         labelCol: { span: 8 },
         wrapperCol: { span: 16 },
@@ -46,7 +58,12 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
         },
         };
         /* eslint-enable no-template-curly-in-string */
-        
+    
+    /**
+     * Handlers and Beahaviors
+     * 
+     */    
+
     const onFinish = (values: any) => {
       console.log(values);
     };
@@ -63,17 +80,17 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
       setShowScheduler(!showScheduler);
     }
 
-    const saveHandler = () =>{
-      
+    const saveHandler = () =>{      
       const vals = form.getFieldsValue();
       //console.log(props.NewsLetterDTO);
       console.log(vals);
+      
       const objToSave:NewsLetter ={
         id:props.NewNewsLetter?0:props.NewsLetterDTO?.id ?? 0,
         name:vals.NewNL.Name?vals.NewNL.Name:props.NewsLetterDTO?.name,
         description:vals.NewNL.Description?vals.NewNL.Description:props.NewsLetterDTO?.description,
         template:vals.NewNL.Template?vals.NewNL.Template:props.NewsLetterDTO?.template,
-        attachment:JSON.stringify(FileObject),
+        attachment:JSON.stringify(props.CurrentFileObject),
         customer:vals.NewNL.Customer?vals.NewNL.Customer:props.NewsLetterDTO?.customer,
         recipients:[]
       };
@@ -84,66 +101,29 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
     const showAttacmentOverlay = () =>{
       setattachOverlay(!AttachOverlay);
       
+      openNotification("NewsLetter Saved");
     }
 
     const FileUploadDone = (res:any) =>{
-      console.log(res)
-      console.log(AttachOverlay);    
-      setFileObject(
+      
+      const fileObjToload:FileInfo =
         {
           filename:res?.filesUploaded[0]?.filename,
           handle:res?.filesUploaded[0]?.handle,
           mimetype:res?.filesUploaded[0]?.mimetype,
           url: res?.filesUploaded[0]?.url,
         }
-      );
-
+      
+      props.FileUploadDoneHandler && props.FileUploadDoneHandler(fileObjToload);
       setattachOverlay(false);
     }
       
-    const getFilenameValue = (fileObject:any) =>{
+    const getFilenameValue = (fileObject:FileInfo | undefined) =>{
+      console.log(fileObject);
       return fileObject?.filename;
     }
       
-      const NLForm: React.FC = () => (
-        <Form form={form}
-          {...layout}
-          name="nest-messages"
-          onFinish={onFinish}
-          style={{ maxWidth: 600 }}
-          validateMessages={validateMessages}
-        >
-          <Form.Item name={['NewNL', 'Name']} label="Name" rules={[{ required: true }]}>
-            <Input defaultValue={props.NewsLetterDTO?.name} />
-          </Form.Item>
-          <Form.Item name={['NewNL', 'Description']} label="Description">
-            <Input.TextArea defaultValue={props.NewsLetterDTO?.description}/>
-          </Form.Item>
-          <Form.Item name={['NewNL', 'Template']} label="Template" >
-            <Input.TextArea defaultValue={props.NewsLetterDTO?.template}/>
-          </Form.Item>          
-          <Form.Item name={['NewNL', 'Customer']} label="Customer">
-            <Input defaultValue={props.NewsLetterDTO?.customer}/>            
-          </Form.Item>
-          
-          <Form.Item name={['NewNL', 'Attachment']} label="Attachment">
-            <Space.Compact style={{ width: '100%' }}>
-              <Input value={getFilenameValue(FileObject)} />
-              <Button type='primary'
-                onClick={showAttacmentOverlay}
-              >Upload File</Button>
-            </Space.Compact>
-          </Form.Item>
-        
-          
-          {/* <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item> */}
-        </Form>      
-               
-      );
+     
     
       
     const handleAddToEmailList =(recipientList:Recipient[]) =>{
@@ -164,22 +144,80 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
         setConfirmLoading(false);
       }, 2000);
     };
-  
+    
+    /**
+     * Hide Emal List
+     */
     const handleCancel = () => {
       
       setShowEmailList(false);
     };
-
+    /**
+     * Set state to show recipient list
+     */
     const showEmailListHandler = () =>{
       setShowEmailList(true)
     }
+    /**
+     * Action Handler to send mails massively
+     */
+    const SendNewsLetterNowHandler =()  => {
+      props.SendNewsLetterNOWHandler && props.SendNewsLetterNOWHandler(props.NewsLetterDTO?.id??0);
+      openNotification("Emails Sent");
+    }
+
+    /**
+     * Functional component to Render the newletter form
+     * @returns Functional Component 
+     */
+    const NLForm: React.FC = () => (
+      <Form form={form}
+        {...layout}
+        name="nest-messages"
+        onFinish={onFinish}
+        style={{ maxWidth: 600 }}
+        validateMessages={validateMessages}
+      >
+        <Form.Item name={['NewNL', 'Name']} label="Name" rules={[{ required: true }]}>
+          <Input defaultValue={props.NewsLetterDTO?.name} />
+        </Form.Item>
+        <Form.Item name={['NewNL', 'Description']} label="Subject">
+          <Input.TextArea defaultValue={props.NewsLetterDTO?.description}/>
+        </Form.Item>
+        <Form.Item name={['NewNL', 'Template']} label="Template" >
+          <Input.TextArea defaultValue={props.NewsLetterDTO?.template} style={{ height:500}}/>
+        </Form.Item>          
+        <Form.Item name={['NewNL', 'Customer']} label="Customer">
+          <Input defaultValue={props.NewsLetterDTO?.customer}/>            
+        </Form.Item>
+        
+        <Form.Item name={['NewNL', 'Attachment']} label="Attachment">
+          <Space.Compact style={{ width: '100%' }}>
+            <Input defaultValue={getFilenameValue(props.CurrentFileObject)} />
+            <Button type='primary'
+              onClick={showAttacmentOverlay}
+            >Upload File</Button>
+          </Space.Compact>
+        </Form.Item>
       
+        
+        {/* <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item> */}
+      </Form>                   
+    );
+      
+    
+
     /**
      * Main Render
      */
     return(
-        
+     
       <div>
+        {contextHolder}
          <Space direction="vertical" size="large" style={{ display: 'flex' }}>
             <NLForm></NLForm>
             <Modal
@@ -219,15 +257,18 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
         
         
         {AttachOverlay?
+          /**
+           * File Upload Picker
+           */
           <PickerOverlay 
               apikey={API_KEY}                
               onUploadDone={(res:any) => FileUploadDone(res)}  
           ></PickerOverlay>
         :null}
-
+        /** Action Buttons*/
         <FloatButton.Group shape="circle" style={{ right: 40 }}>
             <FloatButton
-              onClick={showEmailListHandler}
+              onClick={SendNewsLetterNowHandler}
               tooltip="Send the Newsletter NOW!"
               icon={<SendOutlined />}
               type='primary'
@@ -258,10 +299,11 @@ export function  NewsLetterForm (props:NewsLetterFormProps){
         </FloatButton.Group>
 
 
-
+       
 
 
       </div>
+      
    )
 
    

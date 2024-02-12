@@ -24,6 +24,10 @@ function postSuscribeList ( newsLetterDTO:NewsLetter){
     return http.post<NewsLetter>(`/NewsLetterx/SuscribeList/`,newsLetterDTO);
 }
 
+function sendNewsLetter( newsLetterId:number){
+    return http.post<NewsLetter>(`/NewsLetterx/send?NewsLetterId=${newsLetterId}`);
+}
+
 
 function deleteNewsLetter (id:number){
     return http.delete<NewsLetter>(`/NewsLetterx/${id}`);
@@ -54,8 +58,7 @@ function deleteSchedule (id:number){
 
 
 const NewsLettterAPIService ={
-    getNewsLetterList,
-    //getNewsLetter,
+    getNewsLetterList,    
     updateNewsLetter,
     postNewsLetter,
     deleteNewsLetter,
@@ -65,7 +68,9 @@ const NewsLettterAPIService ={
     putSchedule,
     postSchedule,
     deleteSchedule,
-    getScheduleByNewsletter
+    getScheduleByNewsletter,
+    sendNewsLetter
+    
 };
 
 export default NewsLettterAPIService;
